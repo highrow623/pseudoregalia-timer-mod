@@ -113,17 +113,79 @@ namespace
         }},
     };
 
+    const EventMap transition_events = {
+        {L"Zone_Library", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionLibraryToCastle},
+        }},
+        {L"ZONE_LowerCastle", {
+            {L"BP_TransitionZone_C_0", Event::Event::TransitionCastleToTheatrePillar},
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionCastleToDungeon},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionCastleToBailey},
+            {L"BP_TransitionZone_C_4", Event::Event::TransitionCastleToKeepLocked},
+            {L"BP_TransitionZone_C_5", Event::Event::TransitionCastleToKeepSouth},
+            {L"BP_TransitionZone_C_6", Event::Event::TransitionCastleToKeepNorth},
+            {L"BP_TransitionZone_C_7", Event::Event::TransitionCastleToLibrary},
+            {L"BP_TransitionZone_C_8", Event::Event::TransitionCastleToTheatreFront},
+        }},
+        {L"ZONE_Exterior", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionBaileyToCastle},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionBaileyToTheatre},
+            {L"BP_TransitionZone_C_3", Event::Event::TransitionBaileyToTower},
+            {L"BP_TransitionZone_C_5", Event::Event::TransitionBaileyToUnderbelly},
+        }},
+        {L"Zone_Upper", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionKeepToCastleSouth},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionKeepToCastleLocked},
+            {L"BP_TransitionZone_C_3", Event::Event::TransitionKeepToUnderbelly},
+            {L"BP_TransitionZone_C_4", Event::Event::TransitionKeepToTheatre},
+            {L"BP_TransitionZone_C_5", Event::Event::TransitionKeepToCastleNorth},
+        }},
+        {L"Zone_Caves", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionUnderbellyToBailey},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionUnderbellyToDungeon},
+            {L"BP_TransitionZone_C_3", Event::Event::TransitionUnderbellyToKeep},
+        }},
+        {L"Zone_Theatre", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionTheatreToCastleNorthwest},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionTheatreToKeep},
+            {L"BP_TransitionZone_C_3", Event::Event::TransitionTheatreToBailey},
+            {L"BP_TransitionZone_C_4", Event::Event::TransitionTheatreToDungeon},
+            {L"BP_TransitionZone_C_6", Event::Event::TransitionTheatreToCastleWest},
+        }},
+        {L"ZONE_Dungeon", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionDungeonToCastle},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionDungeonToUnderbelly},
+            {L"BP_TransitionZone_C_3", Event::Event::TransitionDungeonToTheatre},
+        }},
+        {L"Zone_Tower", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionTowerToBailey},
+            {L"BP_TransitionZone_C_2", Event::Event::TransitionTowerToChambers},
+        }},
+        {L"Zone_PrincessChambers", {
+            {L"BP_TransitionZone_C_1", Event::Event::TransitionChambersToTower},
+        }},
+    };
+
     std::wstring current_zone = L"NONE";
 
     typedef std::optional<Event::Event> QueuedEvent;
     QueuedEvent queued_small_key_event = {};
     QueuedEvent queued_hp_event = {};
     QueuedEvent queued_upgrade_event = {};
+    QueuedEvent queued_transition_event = {};
 }
 
 void Trigger::EnterZone(std::wstring zone)
 {
-    Log(L"entered zone " + zone);
+    if (current_zone == L"TitleScreen" && zone == L"ZONE_Dungeon")
+    {
+        Event::Triggered(Event::Event::StartGame);
+    }
+    if (queued_transition_event)
+    {
+        Event::Triggered(*queued_transition_event);
+        queued_transition_event.reset();
+    }
     current_zone = zone;
 }
 
@@ -228,4 +290,23 @@ void Trigger::GetUpgrade()
         Event::Triggered(*queued_upgrade_event);
         queued_upgrade_event.reset();
     }
+}
+
+void Trigger::TouchTransition(std::wstring transition_name)
+{
+    if (!transition_events.contains(current_zone))
+    {
+        Log(L"touched transition, but there are no transitions in " + current_zone, LogType::Warning);
+        return;
+    }
+
+    const auto& zone_transition_events = transition_events.at(current_zone);
+    if (!zone_transition_events.contains(transition_name))
+    {
+        Log(L"touched transition, but there is no traisition " + transition_name + L" in " + current_zone,
+            LogType::Warning);
+        return;
+    }
+
+    queued_transition_event = zone_transition_events.at(transition_name);
 }

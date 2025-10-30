@@ -26,7 +26,7 @@ namespace {
         {}
     };
 
-    std::array<ModHook, 3> actor_hooks = {
+    std::array<ModHook, 4> actor_hooks = {
         ModHook(L"BP_GenericKey_C", L"BndEvt__BP_GenericKey_Sphere_K2Node_ComponentBoundEvent_0_"
                                    "ComponentBeginOverlapSignature__DelegateSignature",
             [](CallableContext context, void*) {
@@ -45,6 +45,11 @@ namespace {
                                       "ComponentBeginOverlapSignature__DelegateSignature",
             [](CallableContext context, void*) {
                 Trigger::TouchUpgrade(context.Context->GetName());
+            }),
+        ModHook(L"BP_TransitionZone_C", L"BndEvt__BP_TransitionZone_Box_K2Node_ComponentBoundEvent_0_"
+                                         "ComponentBeginOverlapSignature__DelegateSignature",
+            [](CallableContext context, void*) {
+                Trigger::TouchTransition(context.Context->GetName());
             }),
     };
 

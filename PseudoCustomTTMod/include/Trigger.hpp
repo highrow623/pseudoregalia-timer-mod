@@ -12,4 +12,5 @@ namespace Trigger
     void GetHealthPiece();
     void TouchUpgrade(std::wstring);
     void GetUpgrade();
+    void TouchTransition(std::wstring);
 }
