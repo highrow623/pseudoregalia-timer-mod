@@ -5,6 +5,7 @@ project(${TARGET})
 
 add_library(${TARGET} SHARED
     "dllmain.cpp"
+    "src/Event.cpp"
     "src/Logger.cpp"
     "src/ModHooks.cpp"
 )
