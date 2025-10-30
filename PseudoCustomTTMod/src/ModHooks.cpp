@@ -26,7 +26,7 @@ namespace {
         {}
     };
 
-    std::array<ModHook, 1> actor_hooks = {
+    std::array<ModHook, 3> actor_hooks = {
         ModHook(L"BP_GenericKey_C", L"BndEvt__BP_GenericKey_Sphere_K2Node_ComponentBoundEvent_0_"
                                    "ComponentBeginOverlapSignature__DelegateSignature",
             [](CallableContext context, void*) {
@@ -36,14 +36,30 @@ namespace {
                     Trigger::TouchSmallKey(context.Context->GetName());
                 }
             }),
+        ModHook(L"BP_HealthPiece_C", L"BndEvt__BP_UpgradeBase_Sphere_K2Node_ComponentBoundEvent_0_"
+                                      "ComponentBeginOverlapSignature__DelegateSignature",
+            [](CallableContext context, void*) {
+                Trigger::TouchHealthPiece(context.Context->GetName());
+            }),
+        ModHook(L"BP_UpgradeBase_C", L"BndEvt__BP_UpgradeBase_Sphere_K2Node_ComponentBoundEvent_0_"
+                                      "ComponentBeginOverlapSignature__DelegateSignature",
+            [](CallableContext context, void*) {
+                Trigger::TouchUpgrade(context.Context->GetName());
+            }),
     };
 
-    std::array<ModHook, 2> object_hooks = {
+    std::array<ModHook, 4> object_hooks = {
         ModHook(L"MV_GameInstance_C", L"updateImportantKey", [](CallableContext context, void*) {
             Trigger::GetMajorKey(context.GetParams<int32_t>());
         }),
         ModHook(L"MV_GameInstance_C", L"getKey", [](CallableContext, void*) {
             Trigger::GetSmallKey();
+        }),
+        ModHook(L"MV_GameInstance_C", L"addHealthPiece", [](CallableContext, void*) {
+            Trigger::GetHealthPiece();
+        }),
+        ModHook(L"MV_GameInstance_C", L"getNewUpgradeSkill", [](CallableContext, void*) {
+            Trigger::GetUpgrade();
         }),
     };
 

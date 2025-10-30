@@ -8,4 +8,8 @@ namespace Trigger
     void GetMajorKey(int32_t);
     void TouchSmallKey(std::wstring);
     void GetSmallKey();
+    void TouchHealthPiece(std::wstring);
+    void GetHealthPiece();
+    void TouchUpgrade(std::wstring);
+    void GetUpgrade();
 }

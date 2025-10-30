@@ -20,56 +20,56 @@ namespace Event
         SmallKeyKeepLeverRoom,
         SmallKeyBaileyBuilding,
 
-        HealthPieceLibraryBack, // TODO support trigger
-        HealthPieceLibraryLocked, // TODO support trigger
-        HealthPieceCastleCorner, // TODO support trigger
-        HealthPieceCastleBalcony, // TODO support trigger
-        HealthPieceCastleCrawlers, // TODO support trigger
-        HealthPieceCastleScythes, // TODO support trigger
-        HealthPieceCastleRiver, // TODO support trigger
-        HealthPieceBaileySteeple, // TODO support trigger
-        HealthPieceKeepLocked, // TODO support trigger
-        HealthPieceUnderbellyRafters, // TODO support trigger
-        HealthPieceUnderbellyPillar, // TODO support trigger
-        HealthPieceUnderbellyBuilding, // TODO support trigger
-        HealthPieceTheatreAuditorium, // TODO support trigger
-        HealthPieceTheatreBoxes, // TODO support trigger
-        HealthPieceDungeonAlcove, // TODO support trigger
-        HealthPieceDungeonPoles, // TODO support trigger
+        HealthPieceLibraryBack,
+        HealthPieceLibraryLocked,
+        HealthPieceCastleCorner,
+        HealthPieceCastleBalcony,
+        HealthPieceCastleCrawlers,
+        HealthPieceCastleScythes,
+        HealthPieceCastleRiver,
+        HealthPieceBaileySteeple,
+        HealthPieceKeepLocked,
+        HealthPieceUnderbellyRafters,
+        HealthPieceUnderbellyPillar,
+        HealthPieceUnderbellyBuilding,
+        HealthPieceTheatreAuditorium,
+        HealthPieceTheatreBoxes,
+        HealthPieceDungeonAlcove,
+        HealthPieceDungeonPoles,
 
-        AbilityDreamBreaker, // TODO support trigger
-        AbilityIndignation, // TODO support trigger
-        AbilitySlide, // TODO support trigger
-        AbilitySolarWind, // TODO support trigger
-        AbilitySunGreaves, // TODO support trigger
-        AbilitySunsetter, // TODO support trigger
-        AbilityClingGem, // TODO support trigger
-        AbilityAscendantLight, // TODO support trigger
-        AbilityStrikebreak, // TODO support trigger
-        AbilitySoulCutter, // TODO support trigger
+        AbilityDreamBreaker,
+        AbilityIndignation,
+        AbilitySlide,
+        AbilitySolarWind,
+        AbilitySunGreaves,
+        AbilitySunsetter,
+        AbilityClingGem,
+        AbilityAscendantLight,
+        AbilityStrikebreak,
+        AbilitySoulCutter,
 
-        AspectClearMindLibrary, // TODO support trigger
-        AspectClearMindKeep, // TODO support trigger
-        AspectClearMindCastle, // TODO support trigger
-        AspectEmpathyBailey, // TODO support trigger
-        AspectEmpathyTheatre, // TODO support trigger
-        AspectGoodGracesCastle, // TODO support trigger
-        AspectGoodGracesDungeon, // TODO support trigger
-        AspectMartialProwess, // TODO support trigger
-        AspectPilgrimage, // TODO support trigger
-        AspectAerialFinesse, // TODO support trigger
-        AspectHeliacalPower, // TODO support trigger
+        AspectClearMindLibrary,
+        AspectClearMindKeep,
+        AspectClearMindCastle,
+        AspectEmpathyBailey,
+        AspectEmpathyTheatre,
+        AspectGoodGracesCastle,
+        AspectGoodGracesDungeon,
+        AspectMartialProwess,
+        AspectPilgrimage,
+        AspectAerialFinesse,
+        AspectHeliacalPower,
 
-        Memento, // TODO support trigger
+        Memento,
 
-        AttireProfessionalism, // TODO support trigger
-        AttireAGuardian, // TODO support trigger
-        AttireChivalry, // TODO support trigger
-        AttireBleedingHeart, // TODO support trigger
-        AttireNostalgia, // TODO support trigger
-        AttireDevotion, // TODO support trigger
-        AttireClass, // TODO support trigger
-        AttireSweater, // TODO support trigger
+        AttireProfessionalism,
+        AttireAGuardian,
+        AttireChivalry,
+        AttireBleedingHeart,
+        AttireNostalgia,
+        AttireDevotion,
+        AttireClass,
+        AttireSweater,
 
         TransitionDungeonToCastle, // TODO support trigger
         TransitionDungeonToUnderbelly, // TODO support trigger

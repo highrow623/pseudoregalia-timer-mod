@@ -10,7 +10,8 @@
 
 namespace
 {
-    const std::unordered_map<std::wstring, std::unordered_map<std::wstring, Event::Event>> small_key_events = {
+    typedef std::unordered_map<std::wstring, std::unordered_map<std::wstring, Event::Event>> EventMap;
+    const EventMap small_key_events = {
         {L"ZONE_Exterior", {
             {L"BP_GenericKey_C_2", Event::Event::SmallKeyBaileyBuilding},
         }},
@@ -30,8 +31,94 @@ namespace
         }},
     };
 
+    const EventMap hp_events = {
+        {L"Zone_Library", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceLibraryBack},
+            {L"BP_HealthPiece_C_3", Event::Event::HealthPieceLibraryLocked},
+        }},
+        {L"ZONE_LowerCastle", {
+            {L"BP_HealthPiece_C_2", Event::Event::HealthPieceCastleCrawlers},
+            {L"BP_HealthPiece_C_3", Event::Event::HealthPieceCastleCorner},
+            {L"BP_HealthPiece_C_4", Event::Event::HealthPieceCastleBalcony},
+            {L"BP_HealthPiece_C_5", Event::Event::HealthPieceCastleRiver},
+            {L"BP_HealthPiece_C_9", Event::Event::HealthPieceCastleScythes},
+        }},
+        {L"ZONE_Exterior", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceBaileySteeple},
+        }},
+        {L"Zone_Upper", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceKeepLocked},
+        }},
+        {L"Zone_Caves", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceUnderbellyRafters},
+            {L"BP_HealthPiece_C_2", Event::Event::HealthPieceUnderbellyBuilding},
+            {L"BP_HealthPiece_C_4", Event::Event::HealthPieceUnderbellyPillar},
+        }},
+        {L"Zone_Theatre", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceTheatreBoxes},
+            {L"BP_HealthPiece_C_3", Event::Event::HealthPieceTheatreAuditorium},
+        }},
+        {L"ZONE_Dungeon", {
+            {L"BP_HealthPiece_C_1", Event::Event::HealthPieceDungeonAlcove},
+            {L"BP_HealthPiece_C_3", Event::Event::HealthPieceDungeonPoles},
+        }},
+    };
+
+    const EventMap upgrade_events = {
+        {L"Zone_Library", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilitySunGreaves},
+            {L"BP_UpgradeBase_C_2", Event::Event::AttireSweater},
+            {L"BP_UpgradeBase_C_6", Event::Event::AspectClearMindLibrary},
+        }},
+        {L"ZONE_LowerCastle", {
+            {L"BP_UpgradeBase_C_2", Event::Event::AbilityIndignation},
+            {L"BP_UpgradeBase_C_3", Event::Event::AspectPilgrimage},
+            {L"BP_UpgradeBase_C_4", Event::Event::AspectGoodGracesCastle},
+            {L"BP_UpgradeBase_C_5", Event::Event::AspectClearMindCastle},
+            {L"BP_UpgradeBase_C_6", Event::Event::Memento},
+            {L"BP_UpgradeBase_C_7", Event::Event::AttireProfessionalism},
+        }},
+        {L"ZONE_Exterior", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilitySolarWind},
+            {L"BP_UpgradeBase_C_2", Event::Event::AspectEmpathyBailey},
+            {L"BP_UpgradeBase_C_3", Event::Event::AttireChivalry},
+        }},
+        {L"Zone_Upper", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilitySunsetter},
+            {L"BP_UpgradeBase_C_2", Event::Event::AbilityStrikebreak},
+            {L"BP_UpgradeBase_C_3", Event::Event::AspectClearMindKeep},
+            {L"BP_UpgradeBase_C_6", Event::Event::AttireAGuardian},
+        }},
+        {L"Zone_Caves", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilityAscendantLight},
+            {L"BP_UpgradeBase_C_2", Event::Event::AttireNostalgia},
+            {L"BP_UpgradeBase_C_4", Event::Event::AspectMartialProwess},
+            {L"BP_UpgradeBase_C_6", Event::Event::AspectHeliacalPower},
+        }},
+        {L"Zone_Theatre", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilitySoulCutter},
+            {L"BP_UpgradeBase_C_2", Event::Event::AspectAerialFinesse},
+            {L"BP_UpgradeBase_C_3", Event::Event::AttireClass},
+            {L"BP_UpgradeBase_C_4", Event::Event::AspectEmpathyTheatre},
+        }},
+        {L"ZONE_Dungeon", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilityDreamBreaker},
+            {L"BP_UpgradeBase_C_2", Event::Event::AbilitySlide},
+            {L"BP_UpgradeBase_C_3", Event::Event::AttireDevotion},
+            {L"BP_UpgradeBase_C_8", Event::Event::AspectGoodGracesDungeon},
+        }},
+        {L"Zone_Tower", {
+            {L"BP_UpgradeBase_C_1", Event::Event::AbilityClingGem},
+            {L"BP_UpgradeBase_C_2", Event::Event::AttireBleedingHeart},
+        }},
+    };
+
     std::wstring current_zone = L"NONE";
-    std::optional<Event::Event> queued_small_key_event = {};
+
+    typedef std::optional<Event::Event> QueuedEvent;
+    QueuedEvent queued_small_key_event = {};
+    QueuedEvent queued_hp_event = {};
+    QueuedEvent queued_upgrade_event = {};
 }
 
 void Trigger::EnterZone(std::wstring zone)
@@ -86,5 +173,59 @@ void Trigger::GetSmallKey()
     {
         Event::Triggered(*queued_small_key_event);
         queued_small_key_event.reset();
+    }
+}
+
+void Trigger::TouchHealthPiece(std::wstring hp_name)
+{
+    if (!hp_events.contains(current_zone))
+    {
+        Log(L"touched hp, but there are no hps in " + current_zone, LogType::Warning);
+        return;
+    }
+
+    const auto& zone_hp_events = hp_events.at(current_zone);
+    if (!zone_hp_events.contains(hp_name))
+    {
+        Log(L"touched hp, but there is no hp " + hp_name + L" in " + current_zone, LogType::Warning);
+        return;
+    }
+
+    queued_hp_event = zone_hp_events.at(hp_name);
+}
+
+void Trigger::GetHealthPiece()
+{
+    if (queued_hp_event)
+    {
+        Event::Triggered(*queued_hp_event);
+        queued_hp_event.reset();
+    }
+}
+
+void Trigger::TouchUpgrade(std::wstring upgrade_name)
+{
+    if (!upgrade_events.contains(current_zone))
+    {
+        Log(L"touched upgrade, but there are no upgrades in " + current_zone, LogType::Warning);
+        return;
+    }
+
+    const auto& zone_upgrade_events = upgrade_events.at(current_zone);
+    if (!zone_upgrade_events.contains(upgrade_name))
+    {
+        Log(L"touched upgrade, but there is no upgrade " + upgrade_name + L" in " + current_zone, LogType::Warning);
+        return;
+    }
+
+    queued_upgrade_event = zone_upgrade_events.at(upgrade_name);
+}
+
+void Trigger::GetUpgrade()
+{
+    if (queued_upgrade_event)
+    {
+        Event::Triggered(*queued_upgrade_event);
+        queued_upgrade_event.reset();
     }
 }
