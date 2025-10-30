@@ -4,6 +4,7 @@
 
 #include "Unreal/UClass.hpp"
 
+#include "Event.hpp"
 #include "Logger.hpp"
 
 namespace {
@@ -15,18 +16,40 @@ namespace {
     {
         std::wstring _class_name;
         std::wstring _function_name;
-        Callable _pre = nop;
-        Callable _post = nop;
+        Callable _pre;
+        Callable _post;
         bool _hooked = false;
 
-        ModHook(std::wstring class_name, std::wstring function_name)
-            : _class_name(class_name), _function_name(function_name)
+        ModHook(std::wstring class_name, std::wstring function_name, Callable pre = nop, Callable post = nop)
+            : _class_name(class_name), _function_name(function_name), _pre(pre), _post(post)
         {}
     };
 
     std::array<ModHook, 0> actor_hooks = {};
 
-    std::array<ModHook, 0> object_hooks = {};
+    std::array<ModHook, 1> object_hooks = {
+        ModHook(L"MV_GameInstance_C", L"updateImportantKey", [](CallableContext context, void*) {
+            auto key_id = context.GetParams<int32_t>();
+            switch (key_id) {
+            case 1:
+                Event::Triggered(Event::Event::MajorKeyBailey);
+                return;
+            case 2:
+                Event::Triggered(Event::Event::MajorKeyUnderbelly);
+                return;
+            case 3:
+                Event::Triggered(Event::Event::MajorKeyTower);
+                return;
+            case 4:
+                Event::Triggered(Event::Event::MajorKeyKeep);
+                return;
+            case 5:
+                Event::Triggered(Event::Event::MajorKeyTheatre);
+                return;
+            }
+            Log("updateImportantKey: unknown key " + std::to_string(key_id), LogType::Warning);
+        }),
+    };
 
     typedef std::function<void(RC::Unreal::AActor*)> ActorCallback;
     const std::unordered_map<std::wstring, ActorCallback> begin_play_post_callbacks = {};
