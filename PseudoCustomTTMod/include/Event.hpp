@@ -12,13 +12,13 @@ namespace Event
         MajorKeyKeep,
         MajorKeyTheatre,
 
-        SmallKeyDungeonRafters, // TODO support trigger
-        SmallKeyDungeonStrongEyes, // TODO support trigger
-        SmallKeyCastleCrossroads, // TODO support trigger
-        SmallKeyCastleTallRoom, // TODO support trigger
-        SmallKeyUnderbellyBigRoom, // TODO support trigger
-        SmallKeyKeepLeverRoom, // TODO support trigger
-        SmallKeyBaileyBuilding, // TODO support trigger
+        SmallKeyDungeonRafters,
+        SmallKeyDungeonStrongEyes,
+        SmallKeyCastleCrossroads,
+        SmallKeyCastleTallRoom,
+        SmallKeyUnderbellyBigRoom,
+        SmallKeyKeepLeverRoom,
+        SmallKeyBaileyBuilding,
 
         HealthPieceLibraryBack, // TODO support trigger
         HealthPieceLibraryLocked, // TODO support trigger

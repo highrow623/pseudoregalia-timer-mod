@@ -8,6 +8,7 @@ add_library(${TARGET} SHARED
     "src/Event.cpp"
     "src/Logger.cpp"
     "src/ModHooks.cpp"
+    "src/Trigger.cpp"
 )
 
 target_include_directories(${TARGET} PRIVATE "include")

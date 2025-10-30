@@ -3,9 +3,10 @@
 #include "ModHooks.hpp"
 
 #include "Unreal/UClass.hpp"
+#include "Unreal/World.hpp"
 
-#include "Event.hpp"
 #include "Logger.hpp"
+#include "Trigger.hpp"
 
 namespace {
     typedef RC::Unreal::UnrealScriptFunctionCallableContext CallableContext;
@@ -25,34 +26,33 @@ namespace {
         {}
     };
 
-    std::array<ModHook, 0> actor_hooks = {};
+    std::array<ModHook, 1> actor_hooks = {
+        ModHook(L"BP_GenericKey_C", L"BndEvt__BP_GenericKey_Sphere_K2Node_ComponentBoundEvent_0_"
+                                   "ComponentBeginOverlapSignature__DelegateSignature",
+            [](CallableContext context, void*) {
+                auto key_id = context.Context->GetValuePtrByPropertyName<int32_t>(L"keyID");
+                if (*key_id == 0)
+                {
+                    Trigger::TouchSmallKey(context.Context->GetName());
+                }
+            }),
+    };
 
-    std::array<ModHook, 1> object_hooks = {
+    std::array<ModHook, 2> object_hooks = {
         ModHook(L"MV_GameInstance_C", L"updateImportantKey", [](CallableContext context, void*) {
-            auto key_id = context.GetParams<int32_t>();
-            switch (key_id) {
-            case 1:
-                Event::Triggered(Event::Event::MajorKeyBailey);
-                return;
-            case 2:
-                Event::Triggered(Event::Event::MajorKeyUnderbelly);
-                return;
-            case 3:
-                Event::Triggered(Event::Event::MajorKeyTower);
-                return;
-            case 4:
-                Event::Triggered(Event::Event::MajorKeyKeep);
-                return;
-            case 5:
-                Event::Triggered(Event::Event::MajorKeyTheatre);
-                return;
-            }
-            Log("updateImportantKey: unknown key " + std::to_string(key_id), LogType::Warning);
+            Trigger::GetMajorKey(context.GetParams<int32_t>());
+        }),
+        ModHook(L"MV_GameInstance_C", L"getKey", [](CallableContext, void*) {
+            Trigger::GetSmallKey();
         }),
     };
 
     typedef std::function<void(RC::Unreal::AActor*)> ActorCallback;
-    const std::unordered_map<std::wstring, ActorCallback> begin_play_post_callbacks = {};
+    const std::unordered_map<std::wstring, ActorCallback> begin_play_post_callbacks = {
+        {L"BP_CTT_Manager_C", [](RC::Unreal::AActor* actor) {
+            Trigger::EnterZone(actor->GetWorld()->GetName());
+        }},
+    };
 
     typedef std::function<void(RC::Unreal::UObject*)> ObjectCallback;
     const std::unordered_map<std::wstring, ObjectCallback> static_construct_object_post_callbacks = {};
