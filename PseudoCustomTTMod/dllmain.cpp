@@ -1,5 +1,9 @@
 #include <Mod/CppUserModBase.hpp>
-#include <DynamicOutput/DynamicOutput.hpp>
+
+#include "Unreal/Hooks.hpp"
+
+#include "Logger.hpp"
+#include "ModHooks.hpp"
 
 class PseudoCustomTTMod : public RC::CppUserModBase
 {
@@ -13,16 +17,28 @@ public:
         // Do not change this unless you want to target a UE4SS version
         // other than the one you're currently building with somehow.
         //ModIntendedSDKVersion = STR("2.6");
-        
-        RC::Output::send<RC::LogLevel::Verbose>(L"[PseudoCustomTTMod] mod initialized\n");
+
+        Log("mod initialized", LogType::Loud);
     }
 
     ~PseudoCustomTTMod() override
-    {
-    }
+    {}
 
-    auto on_update() -> void override
+    auto on_unreal_init() -> void override
     {
+        RC::Unreal::Hook::RegisterBeginPlayPostCallback([](RC::Unreal::AActor* actor) {
+            ModHooks::RegisterActorHooks(actor);
+            ModHooks::RunBeginPlayPostCallback(actor);
+        });
+
+        RC::Unreal::Hook::RegisterStaticConstructObjectPostCallback([](
+            const RC::Unreal::FStaticConstructObjectParameters& params,
+            RC::Unreal::UObject* object
+        ) -> RC::Unreal::UObject* {
+            ModHooks::RegisterObjectHooks(object);
+            ModHooks::RunStaticConstructObjectPostCallback(object);
+            return object;
+        });
     }
 };
 
