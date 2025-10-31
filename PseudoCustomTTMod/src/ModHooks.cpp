@@ -55,6 +55,8 @@ namespace {
         ModHook(L"BP_CTT_Manager_C", L"SyncInfo",
             [](CallableContext context, void*) {
                 Event::HandleTimer(context.Context);
+                auto active_room = context.GetParams<int32_t>();
+                Trigger::SetRoom(active_room);
             }),
     };
 

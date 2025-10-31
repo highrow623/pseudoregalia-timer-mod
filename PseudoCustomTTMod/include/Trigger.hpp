@@ -14,4 +14,5 @@ namespace Trigger
     void GetUpgrade();
     void TouchTransition(std::wstring);
     void Reset();
+    void SetRoom(int32_t);
 }
