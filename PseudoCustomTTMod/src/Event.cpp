@@ -291,6 +291,13 @@ namespace
     bool timer_running = false;
 
     std::string MillisToString(int64_t);
+
+    int64_t SetTimeToCurrent(RC::Unreal::UObject*);
+    void SetTimeToElapsed(RC::Unreal::UObject*);
+    void SetTarget(RC::Unreal::UObject*);
+    void SetDiffByElapsed(RC::Unreal::UObject*);
+    void TrySetDiffPos(RC::Unreal::UObject*, int64_t);
+    void ClearDiff(RC::Unreal::UObject*);
 }
 
 void Event::Triggered(Event event)
@@ -331,121 +338,52 @@ void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
     auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
     if (start_time)
     {
-        auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
-        std::wstring elapsed_str = Logger::ToWide(MillisToString(current_millis));
-        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
-        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+        SetTimeToCurrent(widget);
     }
     else if (elapsed_millis)
     {
-        std::wstring elapsed_str = Logger::ToWide(MillisToString(*elapsed_millis));
-        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
-        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+        SetTimeToElapsed(widget);
     }
     if (target_millis)
     {
-        auto target_str = Logger::ToWide(MillisToString(*target_millis));
-        auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
-        target->SetString(RC::Unreal::FString(target_str.c_str()));
-
+        SetTarget(widget);
         if (elapsed_millis)
         {
-            if (*elapsed_millis > *target_millis)
-            {
-                auto diff_millis = *elapsed_millis - *target_millis;
-                auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
-
-                auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
-                diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
-            }
-            else
-            {
-                auto diff_millis = *target_millis - *elapsed_millis;
-                auto diff_str = L"-" + Logger::ToWide(MillisToString(diff_millis));
-
-                auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
-                diff_neg->SetString(RC::Unreal::FString(diff_str.c_str()));
-            }
+            SetDiffByElapsed(widget);
         }
     }
 }
 
 void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
 {
+    auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
     if (timer_running && elapsed_millis)
     {
         // segment has finished
         timer_running = false;
-        std::wstring elapsed_str = Logger::ToWide(MillisToString(*elapsed_millis));
 
-        auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
-        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
-        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
-
+        SetTimeToElapsed(widget);
         if (target_millis)
         {
-            if (*elapsed_millis > *target_millis)
-            {
-                auto diff_millis = *elapsed_millis - *target_millis;
-                auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
-
-                auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
-                diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
-            }
-            else
-            {
-                auto diff_millis = *target_millis - *elapsed_millis;
-                auto diff_str = L"-" + Logger::ToWide(MillisToString(diff_millis));
-
-                auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
-                diff_neg->SetString(RC::Unreal::FString(diff_str.c_str()));
-            }
+            SetDiffByElapsed(widget);
         }
     }
     else if (!timer_running && start_time)
     {
         // timer not initialized
         timer_running = true;
-        auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
-        std::wstring elapsed_str = Logger::ToWide(MillisToString(current_millis));
 
-        auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
-        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
-        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
-
-        auto target_str = Logger::ToWide(MillisToString(*target_millis));
-        auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
-        if (target_millis)
-        {
-            target->SetString(RC::Unreal::FString(target_str.c_str()));
-        }
-        else
-        {
-            target->SetString(RC::Unreal::FString());
-        }
-
-        auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
-        diff_pos->SetString(RC::Unreal::FString());
-        auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
-        diff_neg->SetString(RC::Unreal::FString());
+        SetTimeToCurrent(widget);
+        SetTarget(widget);
+        ClearDiff(widget);
     }
     else if (start_time)
     {
         // timer running and already initialized
-        auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
-        std::wstring elapsed_str = Logger::ToWide(MillisToString(current_millis));
-
-        auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
-        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
-        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
-
-        if (target_millis && current_millis > *target_millis)
+        auto current_millis = SetTimeToCurrent(widget);
+        if (target_millis)
         {
-            auto diff_millis = current_millis - *target_millis;
-            auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
-
-            auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
-            diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
+            TrySetDiffPos(widget, current_millis);
         }
     }
 }
@@ -502,6 +440,77 @@ std::string MillisToString(int64_t time_millis)
     }
     display_time += std::to_string(millis);
     return display_time;
+}
+
+// expects start_time to contain a value; returns current millis
+int64_t SetTimeToCurrent(RC::Unreal::UObject* widget)
+{
+    auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
+    auto current_str = Logger::ToWide(MillisToString(current_millis));
+    auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
+    time->SetString(RC::Unreal::FString(current_str.c_str()));
+    return current_millis;
+}
+
+// expects elapsed_millis to contain a value
+void SetTimeToElapsed(RC::Unreal::UObject* widget)
+{
+    auto elapsed_str = Logger::ToWide(MillisToString(*elapsed_millis));
+    auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
+    time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+}
+
+void SetTarget(RC::Unreal::UObject* widget)
+{
+    auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
+    if (target_millis)
+    {
+        auto target_str = Logger::ToWide(MillisToString(*target_millis));
+        target->SetString(RC::Unreal::FString(target_str.c_str()));
+    }
+    else
+    {
+        target->SetString(RC::Unreal::FString());
+    }
+}
+
+// expects target_millis and elapsed_millis to contain a value
+void SetDiffByElapsed(RC::Unreal::UObject* widget)
+{
+    if (*elapsed_millis > *target_millis)
+    {
+        auto diff_millis = *elapsed_millis - *target_millis;
+        auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
+        auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
+        diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
+    }
+    else
+    {
+        auto diff_millis = *target_millis - *elapsed_millis;
+        auto diff_str = L"-" + Logger::ToWide(MillisToString(diff_millis));
+        auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
+        diff_neg->SetString(RC::Unreal::FString(diff_str.c_str()));
+    }
+}
+
+// expects target_millis to contain a value
+void TrySetDiffPos(RC::Unreal::UObject* widget, int64_t current_millis)
+{
+    if (current_millis > *target_millis)
+    {
+        auto diff_millis = current_millis - *target_millis;
+        auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
+        auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
+        diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
+    }
+}
+
+void ClearDiff(RC::Unreal::UObject* widget)
+{
+    auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
+    diff_pos->SetString(RC::Unreal::FString());
+    auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
+    diff_neg->SetString(RC::Unreal::FString());
 }
 
 } // namespace
