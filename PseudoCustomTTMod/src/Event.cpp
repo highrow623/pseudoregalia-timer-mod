@@ -413,12 +413,21 @@ void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
         auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
         time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
 
+        auto target_str = Logger::ToWide(MillisToString(*target_millis));
+        auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
         if (target_millis)
         {
-            auto target_str = Logger::ToWide(MillisToString(*target_millis));
-            auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
             target->SetString(RC::Unreal::FString(target_str.c_str()));
         }
+        else
+        {
+            target->SetString(RC::Unreal::FString());
+        }
+
+        auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
+        diff_pos->SetString(RC::Unreal::FString());
+        auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
+        diff_neg->SetString(RC::Unreal::FString());
     }
     else if (start_time)
     {
