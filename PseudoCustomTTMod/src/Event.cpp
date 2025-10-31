@@ -2,14 +2,16 @@
 
 #include "Event.hpp"
 
-#include <string>
+#include <chrono>
 #include <map>
+#include <optional>
+#include <string>
 
 #include "Logger.hpp"
 
 namespace
 {
-    std::map<Event::Event, std::string> event_to_string = {
+    const std::map<Event::Event, std::string> event_to_string = {
         {Event::Event::StartGame, "Start Game"},
 
         {Event::Event::MajorKeyBailey, "Bailey Major Key"},
@@ -112,6 +114,12 @@ namespace
 
         {Event::Event::FinishGame, "Finish Game"},
     };
+
+    std::optional<Event::Event> start_event = Event::Event::AttireDevotion;
+    std::optional<Event::Event> end_event = Event::Event::HealthPieceDungeonPoles;
+    std::optional<std::chrono::steady_clock::time_point> start_time = {};
+
+    std::string MillisToString(int64_t);
 }
 
 void Event::Triggered(Event event)
@@ -122,4 +130,70 @@ void Event::Triggered(Event event)
         return;
     }
     Log("e: " + event_to_string.at(event));
+
+    if (!start_time && start_event && *start_event == event && end_event)
+    {
+        Log("starting timer");
+        start_time = std::chrono::steady_clock::now();
+    }
+
+    if (start_time && end_event && *end_event == event)
+    {
+        auto elapsed_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
+        Log("ending timer; elapsed millis: " + MillisToString(elapsed_millis));
+        start_time.reset();
+    }
 }
+
+void Event::Reset()
+{
+    if (start_time)
+    {
+        start_time.reset();
+        Log("timer reset");
+    }
+}
+
+namespace
+{
+
+std::string MillisToString(int64_t time_millis)
+{
+    int64_t millis = time_millis % 1000;
+    int64_t time_seconds = time_millis / 1000;
+    int64_t seconds = time_seconds % 60;
+    int64_t time_minutes = time_seconds / 60;
+    int64_t minutes = time_minutes % 60;
+    int64_t hours = time_minutes / 60;
+
+    std::string display_time;
+    if (hours)
+    {
+        display_time += std::to_string(hours) + ":";
+        if (minutes < 10)
+        {
+            display_time += "0";
+        }
+    }
+    if (hours || minutes)
+    {
+        display_time += std::to_string(minutes) + ":";
+        if (seconds < 10)
+        {
+            display_time += "0";
+        }
+    }
+    display_time += std::to_string(seconds) + ".";
+    if (millis < 10)
+    {
+        display_time += "00";
+    }
+    else if (millis < 100)
+    {
+        display_time += "0";
+    }
+    display_time += std::to_string(millis);
+    return display_time;
+}
+
+} // namespace

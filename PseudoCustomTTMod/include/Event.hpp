@@ -108,4 +108,5 @@ namespace Event
     };
 
     void Triggered(Event);
+    void Reset();
 }

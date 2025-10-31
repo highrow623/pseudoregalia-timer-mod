@@ -53,7 +53,7 @@ namespace {
             }),
     };
 
-    std::array<ModHook, 4> object_hooks = {
+    std::array<ModHook, 5> object_hooks = {
         ModHook(L"MV_GameInstance_C", L"updateImportantKey", [](CallableContext context, void*) {
             Trigger::GetMajorKey(context.GetParams<int32_t>());
         }),
@@ -65,6 +65,9 @@ namespace {
         }),
         ModHook(L"MV_GameInstance_C", L"getNewUpgradeSkill", [](CallableContext, void*) {
             Trigger::GetUpgrade();
+        }),
+        ModHook(L"MV_GameInstance_C", L"reloadAndRespawn", [](CallableContext, void*) {
+            Trigger::Reset();
         }),
     };
 

@@ -310,3 +310,12 @@ void Trigger::TouchTransition(std::wstring transition_name)
 
     queued_transition_event = zone_transition_events.at(transition_name);
 }
+
+void Trigger::Reset()
+{
+    queued_small_key_event.reset();
+    queued_hp_event.reset();
+    queued_upgrade_event.reset();
+    queued_transition_event.reset();
+    Event::Reset();
+}
