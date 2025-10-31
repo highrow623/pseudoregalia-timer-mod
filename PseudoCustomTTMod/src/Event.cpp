@@ -282,8 +282,8 @@ namespace
         {Event::Event::FinishGame, "Finish Game"},
     };
 
-    std::optional<Event::Event> start_event = Event::Event::RoomDungeon5;
-    std::optional<Event::Event> end_event = Event::Event::RoomDungeon6;
+    std::optional<Event::Event> start_event = Event::Event::RoomUnderbelly24;
+    std::optional<Event::Event> end_event = Event::Event::AspectMartialProwess;
     std::optional<std::chrono::steady_clock::time_point> start_time = {};
     std::optional<int64_t> elapsed_millis = {};
     std::optional<int64_t> pb_millis = {};
@@ -321,6 +321,51 @@ void Event::Triggered(Event event)
         if (!pb_millis || *elapsed_millis < *pb_millis)
         {
             pb_millis = elapsed_millis;
+        }
+    }
+}
+
+void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
+{
+    if (!*manager_obj->GetValuePtrByPropertyName<bool>(L"Run")) return;
+    auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
+    if (start_time)
+    {
+        auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
+        std::wstring elapsed_str = Logger::ToWide(MillisToString(current_millis));
+        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
+        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+    }
+    else if (elapsed_millis)
+    {
+        std::wstring elapsed_str = Logger::ToWide(MillisToString(*elapsed_millis));
+        auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
+        time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+    }
+    if (target_millis)
+    {
+        auto target_str = Logger::ToWide(MillisToString(*target_millis));
+        auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
+        target->SetString(RC::Unreal::FString(target_str.c_str()));
+
+        if (elapsed_millis)
+        {
+            if (*elapsed_millis > *target_millis)
+            {
+                auto diff_millis = *elapsed_millis - *target_millis;
+                auto diff_str = L"+" + Logger::ToWide(MillisToString(diff_millis));
+
+                auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
+                diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
+            }
+            else
+            {
+                auto diff_millis = *target_millis - *elapsed_millis;
+                auto diff_str = L"-" + Logger::ToWide(MillisToString(diff_millis));
+
+                auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
+                diff_neg->SetString(RC::Unreal::FString(diff_str.c_str()));
+            }
         }
     }
 }
@@ -367,6 +412,7 @@ void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
         auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
         auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
         time->SetString(RC::Unreal::FString(elapsed_str.c_str()));
+
         if (target_millis)
         {
             auto target_str = Logger::ToWide(MillisToString(*target_millis));
@@ -397,7 +443,7 @@ void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
 
 void Event::Reset()
 {
-    if (start_time)
+    if (start_time || elapsed_millis)
     {
         start_time.reset();
         elapsed_millis.reset();

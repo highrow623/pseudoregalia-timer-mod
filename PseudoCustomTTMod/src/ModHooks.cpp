@@ -83,6 +83,7 @@ namespace {
     const std::unordered_map<std::wstring, ActorCallback> begin_play_post_callbacks = {
         {L"BP_CTT_Manager_C", [](RC::Unreal::AActor* actor) {
             Trigger::EnterZone(actor->GetWorld()->GetName());
+            Event::InitializeTimer(actor);
         }},
     };
 

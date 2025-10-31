@@ -275,6 +275,7 @@ namespace Event
     };
 
     void Triggered(Event);
+    void InitializeTimer(RC::Unreal::UObject*);
     void HandleTimer(RC::Unreal::UObject*);
     void Reset();
 }
