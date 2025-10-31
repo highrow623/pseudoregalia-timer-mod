@@ -317,5 +317,4 @@ void Trigger::Reset()
     queued_hp_event.reset();
     queued_upgrade_event.reset();
     queued_transition_event.reset();
-    Event::Reset();
 }

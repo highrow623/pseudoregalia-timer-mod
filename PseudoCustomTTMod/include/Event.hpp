@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Unreal/UObject.hpp"
+
 namespace Event
 {
     enum class Event
@@ -108,5 +110,6 @@ namespace Event
     };
 
     void Triggered(Event);
+    void HandleTimer(RC::Unreal::UObject*);
     void Reset();
 }

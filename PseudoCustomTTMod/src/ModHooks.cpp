@@ -5,6 +5,7 @@
 #include "Unreal/UClass.hpp"
 #include "Unreal/World.hpp"
 
+#include "Event.hpp"
 #include "Logger.hpp"
 #include "Trigger.hpp"
 
@@ -26,7 +27,7 @@ namespace {
         {}
     };
 
-    std::array<ModHook, 4> actor_hooks = {
+    std::array<ModHook, 5> actor_hooks = {
         ModHook(L"BP_GenericKey_C", L"BndEvt__BP_GenericKey_Sphere_K2Node_ComponentBoundEvent_0_"
                                    "ComponentBeginOverlapSignature__DelegateSignature",
             [](CallableContext context, void*) {
@@ -51,6 +52,10 @@ namespace {
             [](CallableContext context, void*) {
                 Trigger::TouchTransition(context.Context->GetName());
             }),
+        ModHook(L"BP_CTT_Manager_C", L"SyncInfo",
+            [](CallableContext context, void*) {
+                Event::HandleTimer(context.Context);
+            }),
     };
 
     std::array<ModHook, 5> object_hooks = {
@@ -68,6 +73,7 @@ namespace {
         }),
         ModHook(L"MV_GameInstance_C", L"reloadAndRespawn", [](CallableContext, void*) {
             Trigger::Reset();
+            Event::Reset();
         }),
     };
 
