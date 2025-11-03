@@ -7,6 +7,7 @@ namespace Event
     enum class Event
     {
         StartGame,
+        FinishGame, // TODO support trigger
 
         MajorKeyBailey,
         MajorKeyUnderbelly,
@@ -270,12 +271,12 @@ namespace Event
         RoomTower4,
         RoomTower5,
         RoomTower6,
-
-        FinishGame, // TODO support trigger
     };
 
     void Triggered(Event);
     void InitializeTimer(RC::Unreal::UObject*);
+    void InitializeWidget(RC::Unreal::UObject*);
+    void UpdateEvents(RC::Unreal::UObject*);
     void HandleTimer(RC::Unreal::UObject*);
     void Reset();
 }

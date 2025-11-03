@@ -6,8 +6,10 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <unordered_map>
 
 #include "Unreal/FText.hpp"
+#include "Unreal/UFunction.hpp"
 
 #include "Logger.hpp"
 
@@ -15,6 +17,7 @@ namespace
 {
     const std::map<Event::Event, std::string> event_to_string = {
         {Event::Event::StartGame, "Start Game"},
+        {Event::Event::FinishGame, "Finish Game"},
 
         {Event::Event::MajorKeyBailey, "Bailey Major Key"},
         {Event::Event::MajorKeyUnderbelly, "Underbelly Major Key"},
@@ -278,19 +281,33 @@ namespace
         {Event::Event::RoomTower4, "Enter Tower 4"},
         {Event::Event::RoomTower5, "Enter Tower 5"},
         {Event::Event::RoomTower6, "Enter Tower 6"},
-
-        {Event::Event::FinishGame, "Finish Game"},
     };
 
-    std::optional<Event::Event> start_event = Event::Event::RoomUnderbelly24;
-    std::optional<Event::Event> end_event = Event::Event::AspectMartialProwess;
+    // the event map is ordered which means each event has an index, so we create this vector to be able to map an index
+    // back to an event
+    const std::vector<Event::Event> event_list = ([]() -> std::vector<Event::Event> {
+        std::vector<Event::Event> m;
+        m.reserve(event_to_string.size());
+        for (const auto& [event, _] : event_to_string)
+        {
+            m.push_back(event);
+        }
+        return m;
+    })();
+
+    bool initial_event_load_finished = false;
+    std::optional<Event::Event> start_event = {};
+    std::optional<Event::Event> end_event = {};
     std::optional<std::chrono::steady_clock::time_point> start_time = {};
     std::optional<int64_t> elapsed_millis = {};
-    std::optional<int64_t> pb_millis = {};
     std::optional<int64_t> target_millis = {};
     bool timer_running = false;
 
+    std::unordered_map<Event::Event, std::unordered_map<Event::Event, int64_t>> pbs = {};
+
     std::string MillisToString(int64_t);
+
+    void SetEvents(int32_t, int32_t);
 
     int64_t SetTimeToCurrent(RC::Unreal::UObject*);
     void SetTimeToElapsed(RC::Unreal::UObject*);
@@ -298,6 +315,9 @@ namespace
     void SetDiffByElapsed(RC::Unreal::UObject*);
     void TrySetDiffPos(RC::Unreal::UObject*, int64_t);
     void ClearDiff(RC::Unreal::UObject*);
+
+    std::optional<int64_t> GetPB();
+    void SetPBFromElapsed();
 }
 
 void Event::Triggered(Event event)
@@ -314,9 +334,11 @@ void Event::Triggered(Event event)
         Log("starting timer");
         start_time = std::chrono::steady_clock::now();
         elapsed_millis.reset();
-        if (pb_millis)
+
+        auto pb = GetPB();
+        if (pb)
         {
-            target_millis = pb_millis;
+            target_millis = *pb;
         }
     }
 
@@ -325,15 +347,24 @@ void Event::Triggered(Event event)
         elapsed_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
         Log("ending timer; elapsed millis: " + MillisToString(*elapsed_millis));
         start_time.reset();
-        if (!pb_millis || *elapsed_millis < *pb_millis)
+
+        auto pb = GetPB();
+        if (!pb || *elapsed_millis < *pb)
         {
-            pb_millis = elapsed_millis;
+            SetPBFromElapsed();
         }
     }
 }
 
 void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
 {
+    if (!initial_event_load_finished)
+    {
+        auto start_index = *manager_obj->GetValuePtrByPropertyName<int32_t>(L"StartIndex");
+        auto end_index = *manager_obj->GetValuePtrByPropertyName<int32_t>(L"EndIndex");
+        SetEvents(start_index, end_index);
+        initial_event_load_finished = true;
+    }
     if (!*manager_obj->GetValuePtrByPropertyName<bool>(L"Run")) return;
     auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
     if (start_time)
@@ -352,6 +383,32 @@ void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
             SetDiffByElapsed(widget);
         }
     }
+}
+
+void Event::InitializeWidget(RC::Unreal::UObject* widget)
+{
+    auto func = widget->GetFunctionByName(L"SetEvents");
+    if (!func)
+    {
+        Log(L"function \"SetEvents\" not found on options widget", LogType::Error);
+        return;
+    }
+
+    RC::Unreal::TArray<RC::Unreal::FText> events;
+    events.Reserve(event_to_string.size());
+    for (const auto& [_, event_string] : event_to_string)
+    {
+        events.Add(RC::Unreal::FText(Logger::ToWide(event_string)));
+    }
+    auto param = std::make_shared<RC::Unreal::TArray<RC::Unreal::FText>>(events);
+    widget->ProcessEvent(func, param.get());
+}
+
+void Event::UpdateEvents(RC::Unreal::UObject* widget)
+{
+    auto start_index = *widget->GetValuePtrByPropertyName<int32_t>(L"StartIndex");
+    auto end_index = *widget->GetValuePtrByPropertyName<int32_t>(L"EndIndex");
+    SetEvents(start_index, end_index);
 }
 
 void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
@@ -442,6 +499,29 @@ std::string MillisToString(int64_t time_millis)
     return display_time;
 }
 
+void SetEvents(int32_t start_index, int32_t end_index)
+{
+    if (start_index >= 0 && size_t(start_index) < event_list.size())
+    {
+        start_event = event_list[start_index];
+        Log("start event set to " + event_to_string.at(*start_event));
+    }
+    else
+    {
+        Log("start event index " + std::to_string(start_index) + " does not correspond to an event");
+    }
+    if (end_index >= 0 && size_t(end_index) < event_list.size())
+    {
+        end_event = event_list[end_index];
+        Log("end event set to " + event_to_string.at(*end_event));
+    }
+    else
+    {
+        Log("end event index " + std::to_string(end_index) + " does not correspond to an event");
+    }
+    // TODO reset timer if it's running?
+}
+
 // expects start_time to contain a value; returns current millis
 int64_t SetTimeToCurrent(RC::Unreal::UObject* widget)
 {
@@ -511,6 +591,21 @@ void ClearDiff(RC::Unreal::UObject* widget)
     diff_pos->SetString(RC::Unreal::FString());
     auto diff_neg = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffNeg");
     diff_neg->SetString(RC::Unreal::FString());
+}
+
+// expects start_event and end_event to contain a value
+std::optional<int64_t> GetPB()
+{
+    if (!pbs.contains(*start_event)) return {};
+    const auto& from_start = pbs.at(*start_event);
+    if (!from_start.contains(*end_event)) return {};
+    return from_start.at(*end_event);
+}
+
+// expects start_event, end_event, and elapsed_millis to all contain values
+void SetPBFromElapsed()
+{
+    pbs[*start_event][*end_event] = *elapsed_millis;
 }
 
 } // namespace

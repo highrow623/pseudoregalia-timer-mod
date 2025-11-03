@@ -60,7 +60,7 @@ namespace {
             }),
     };
 
-    std::array<ModHook, 5> object_hooks = {
+    std::array<ModHook, 6> object_hooks = {
         ModHook(L"MV_GameInstance_C", L"updateImportantKey", [](CallableContext context, void*) {
             Trigger::GetMajorKey(context.GetParams<int32_t>());
         }),
@@ -77,6 +77,9 @@ namespace {
             Trigger::Reset();
             Event::Reset();
         }),
+        ModHook(L"WBP_PseudoCustomTTOptions_C", L"SaveEvents", [](CallableContext context, void*) {
+            Event::UpdateEvents(context.Context);
+        }),
     };
 
     typedef std::function<void(RC::Unreal::AActor*)> ActorCallback;
@@ -88,7 +91,11 @@ namespace {
     };
 
     typedef std::function<void(RC::Unreal::UObject*)> ObjectCallback;
-    const std::unordered_map<std::wstring, ObjectCallback> static_construct_object_post_callbacks = {};
+    const std::unordered_map<std::wstring, ObjectCallback> static_construct_object_post_callbacks = {
+        {L"WBP_PseudoCustomTTOptions_C", [](RC::Unreal::UObject* object) {
+            Event::InitializeWidget(object);
+        }},
+    };
 
     void RegisterModHook(RC::Unreal::UObject*, ModHook&);
 } // namespace
