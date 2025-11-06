@@ -8,7 +8,7 @@
 
 void Logger::Log(const std::wstring& message, LogType log_level)
 {
-    auto full_message = L"[PseudoCustomTTMod] " + message + L"\n";
+    auto full_message = L"[PseudoregaliaTimerMod] " + message + L"\n";
     switch (log_level)
     {
     case LogType::Default:

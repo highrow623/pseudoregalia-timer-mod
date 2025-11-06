@@ -8,7 +8,6 @@
 * update ue4ss to 3.0.1
 * update console messages to include the current time if the timer is running
 * add trigger for beating the game
-* rename mod to PseudoregaliaTimerMod
 * write readme
   * install instructions
   * recommended mods

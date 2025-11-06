@@ -5,21 +5,21 @@
 #include "Logger.hpp"
 #include "ModHooks.hpp"
 
-class PseudoCustomTTMod : public RC::CppUserModBase
+class PseudoregaliaTimerMod : public RC::CppUserModBase
 {
 public:
-    PseudoCustomTTMod() : CppUserModBase()
+    PseudoregaliaTimerMod() : CppUserModBase()
     {
-        ModName = STR("PseudoCustomTTMod");
+        ModName = STR("PseudoregaliaTimerMod");
         ModVersion = STR("1.0");
-        ModDescription = STR("Pseudoregalia Custom Time Trials");
+        ModDescription = STR("Pseudoregalia Speedrun Timer Mod");
         ModAuthors = STR("highrow623");
         // Do not change this unless you want to target a UE4SS version
         // other than the one you're currently building with somehow.
         //ModIntendedSDKVersion = STR("2.6");
     }
 
-    ~PseudoCustomTTMod() override
+    ~PseudoregaliaTimerMod() override
     {}
 
     auto on_unreal_init() -> void override
@@ -40,15 +40,15 @@ public:
     }
 };
 
-#define PSEUDO_CUSTOM_TT_MOD_API __declspec(dllexport)
+#define PSEUDOREGALIA_TIMER_MOD_API __declspec(dllexport)
 extern "C"
 {
-    PSEUDO_CUSTOM_TT_MOD_API RC::CppUserModBase* start_mod()
+    PSEUDOREGALIA_TIMER_MOD_API RC::CppUserModBase* start_mod()
     {
-        return new PseudoCustomTTMod();
+        return new PseudoregaliaTimerMod();
     }
 
-    PSEUDO_CUSTOM_TT_MOD_API void uninstall_mod(RC::CppUserModBase* mod)
+    PSEUDOREGALIA_TIMER_MOD_API void uninstall_mod(RC::CppUserModBase* mod)
     {
         delete mod;
     }
