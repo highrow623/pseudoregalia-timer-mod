@@ -12,4 +12,3 @@
   * install instructions
   * recommended mods
   * how to use
-* make and upload maps with room numbers
