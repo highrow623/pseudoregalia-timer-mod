@@ -395,21 +395,14 @@ void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
 
 void Event::InitializeWidget(RC::Unreal::UObject* widget)
 {
-    auto func = widget->GetFunctionByName(L"SetEvents");
-    if (!func)
-    {
-        Log(L"function \"SetEvents\" not found on options widget", LogType::Error);
-        return;
-    }
+    auto events = widget->GetValuePtrByPropertyName<RC::Unreal::TArray<RC::Unreal::FText>>(L"Events");
+    if (events->Num() > 0) return;
 
-    RC::Unreal::TArray<RC::Unreal::FText> events;
-    events.Reserve(event_to_string.size());
+    events->Reserve(event_to_string.size());
     for (const auto& [_, event_string] : event_to_string)
     {
-        events.Add(RC::Unreal::FText(Logger::ToWide(event_string)));
+        events->Add(RC::Unreal::FText(Logger::ToWide(event_string)));
     }
-    auto param = std::make_shared<RC::Unreal::TArray<RC::Unreal::FText>>(events);
-    widget->ProcessEvent(func, param.get());
 }
 
 void Event::UpdateEvents(RC::Unreal::UObject* widget)
