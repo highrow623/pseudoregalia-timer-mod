@@ -278,5 +278,5 @@ namespace Event
     void InitializeOptionsWidget(RC::Unreal::UObject*);
     void UpdateEvents(RC::Unreal::UObject*);
     void UpdateTimer(RC::Unreal::UObject*);
-    void Reset();
+    bool Reset();
 }

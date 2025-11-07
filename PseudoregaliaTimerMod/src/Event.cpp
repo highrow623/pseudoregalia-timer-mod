@@ -302,6 +302,7 @@ namespace
     std::optional<int64_t> elapsed_millis = {};
     std::optional<int64_t> target_millis = {};
     bool timer_running = false;
+    bool reset_timer_queued = false;
 
     std::unordered_map<Event::Event, std::unordered_map<Event::Event, int64_t>> pbs = {};
 
@@ -314,6 +315,8 @@ namespace
     void SetTarget(RC::Unreal::UObject*);
     void SetDiffByElapsed(RC::Unreal::UObject*);
     void TrySetDiffPos(RC::Unreal::UObject*, int64_t);
+    void ClearTime(RC::Unreal::UObject*);
+    void ClearTarget(RC::Unreal::UObject*);
     void ClearDiff(RC::Unreal::UObject*);
 
     std::optional<int64_t> GetPB();
@@ -373,6 +376,12 @@ void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
         SetEvents(start_index, end_index);
         initial_event_load_finished = true;
     }
+    if (reset_timer_queued)
+    {
+        // if a reset was queued but never executed in the previous scene, we want to ignore it. this function being run
+        // means that the timer is uninitialized anyway.
+        reset_timer_queued = false;
+    }
     if (!*manager_obj->GetValuePtrByPropertyName<bool>(L"Run")) return;
     auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
     if (start_time)
@@ -415,7 +424,14 @@ void Event::UpdateEvents(RC::Unreal::UObject* widget)
 void Event::UpdateTimer(RC::Unreal::UObject* manager_obj)
 {
     auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
-    if (timer_running && elapsed_millis)
+    if (reset_timer_queued)
+    {
+        ClearTime(widget);
+        ClearTarget(widget);
+        ClearDiff(widget);
+        reset_timer_queued = false;
+    }
+    else if (timer_running && elapsed_millis)
     {
         // segment has finished
         timer_running = false;
@@ -446,16 +462,19 @@ void Event::UpdateTimer(RC::Unreal::UObject* manager_obj)
     }
 }
 
-void Event::Reset()
+bool Event::Reset()
 {
     if (start_time || elapsed_millis)
     {
+        Log("resetting timer");
+
         start_time.reset();
         elapsed_millis.reset();
         target_millis.reset();
         timer_running = false;
-        Log("timer reset");
+        return true;
     }
+    return false;
 }
 
 namespace
@@ -520,7 +539,11 @@ void SetEvents(int32_t start_index, int32_t end_index)
     {
         Log("end event index " + std::to_string(end_index) + " does not correspond to an event");
     }
-    // TODO reset timer if it's running?
+
+    if (Event::Reset())
+    {
+        reset_timer_queued = true;
+    }
 }
 
 // expects start_time to contain a value; returns current millis
@@ -584,6 +607,19 @@ void TrySetDiffPos(RC::Unreal::UObject* widget, int64_t current_millis)
         auto diff_pos = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"DiffPos");
         diff_pos->SetString(RC::Unreal::FString(diff_str.c_str()));
     }
+}
+
+void ClearTime(RC::Unreal::UObject* widget)
+{
+    auto time = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Time");
+    time->SetString(RC::Unreal::FString());
+}
+
+void ClearTarget(RC::Unreal::UObject* widget)
+{
+    auto target = widget->GetValuePtrByPropertyName<RC::Unreal::FText>(L"Target");
+    target->SetString(RC::Unreal::FString());
+
 }
 
 void ClearDiff(RC::Unreal::UObject* widget)

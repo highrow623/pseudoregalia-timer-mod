@@ -1,6 +1,5 @@
 # TODO
 
-* reset timer when events are changed if timer is running or finished
 * remake the options menu to group the events into categories
 * show pb(s?) in options menu
   * add button to reset current pb
