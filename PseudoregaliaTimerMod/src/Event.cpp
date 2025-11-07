@@ -327,13 +327,14 @@ void Event::Triggered(Event event)
         Log("unknown event triggered", LogType::Warning);
         return;
     }
-    Log("e: " + event_to_string.at(event));
 
+    std::string timer_str;
     if (!start_time && start_event && *start_event == event && end_event)
     {
-        Log("starting timer");
+        // start timer event
         start_time = std::chrono::steady_clock::now();
         elapsed_millis.reset();
+        timer_str = " (0.000)";
 
         auto pb = GetPB();
         if (pb)
@@ -341,12 +342,12 @@ void Event::Triggered(Event event)
             target_millis = *pb;
         }
     }
-
-    if (start_time && end_event && *end_event == event)
+    else if (start_time && end_event && *end_event == event)
     {
+        // end timer event
         elapsed_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
-        Log("ending timer; elapsed millis: " + MillisToString(*elapsed_millis));
         start_time.reset();
+        timer_str = " (" + MillisToString(*elapsed_millis) + ")";
 
         auto pb = GetPB();
         if (!pb || *elapsed_millis < *pb)
@@ -354,6 +355,13 @@ void Event::Triggered(Event event)
             SetPBFromElapsed();
         }
     }
+    else if (start_time)
+    {
+        // mid timer event
+        auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
+        timer_str = " (" + MillisToString(current_millis) + ")";
+    }
+    Log("e: " + event_to_string.at(event) + timer_str);
 }
 
 void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)

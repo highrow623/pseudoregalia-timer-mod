@@ -6,7 +6,6 @@
   * add button to reset current pb
   * add button to reset all pbs
 * update ue4ss to 3.0.1
-* update console messages to include the current time if the timer is running
 * add trigger for beating the game
 * write readme
   * install instructions
