@@ -275,7 +275,7 @@ namespace Event
 
     void Triggered(Event);
     void InitializeTimer(RC::Unreal::UObject*);
-    void InitializeWidget(RC::Unreal::UObject*);
+    void InitializeOptionsWidget(RC::Unreal::UObject*);
     void UpdateEvents(RC::Unreal::UObject*);
     void HandleTimer(RC::Unreal::UObject*);
     void Reset();

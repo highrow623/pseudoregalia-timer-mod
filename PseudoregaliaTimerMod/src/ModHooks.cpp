@@ -93,7 +93,7 @@ namespace {
     typedef std::function<void(RC::Unreal::UObject*)> ObjectCallback;
     const std::unordered_map<std::wstring, ObjectCallback> static_construct_object_post_callbacks = {
         {L"WBP_PseudoregaliaTimerModOptions_C", [](RC::Unreal::UObject* object) {
-            Event::InitializeWidget(object);
+            Event::InitializeOptionsWidget(object);
         }},
     };
 

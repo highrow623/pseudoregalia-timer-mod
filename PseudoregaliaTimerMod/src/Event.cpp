@@ -393,7 +393,7 @@ void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
     }
 }
 
-void Event::InitializeWidget(RC::Unreal::UObject* widget)
+void Event::InitializeOptionsWidget(RC::Unreal::UObject* widget)
 {
     auto events = widget->GetValuePtrByPropertyName<RC::Unreal::TArray<RC::Unreal::FText>>(L"Events");
     if (events->Num() > 0) return;
