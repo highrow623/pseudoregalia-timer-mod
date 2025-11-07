@@ -412,7 +412,7 @@ void Event::UpdateEvents(RC::Unreal::UObject* widget)
     SetEvents(start_index, end_index);
 }
 
-void Event::HandleTimer(RC::Unreal::UObject* manager_obj)
+void Event::UpdateTimer(RC::Unreal::UObject* manager_obj)
 {
     auto widget = *manager_obj->GetValuePtrByPropertyName<RC::Unreal::UObject*>(L"TimerWidgetRef");
     if (timer_running && elapsed_millis)
