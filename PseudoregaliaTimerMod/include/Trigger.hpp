@@ -13,6 +13,7 @@ namespace Trigger
     void TouchUpgrade(std::wstring);
     void GetUpgrade();
     void TouchTransition(std::wstring);
+    void EnemyDeath(std::wstring);
     void Reset();
     void SetRoom(int32_t);
 }

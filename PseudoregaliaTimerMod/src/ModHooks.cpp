@@ -27,7 +27,7 @@ namespace {
         {}
     };
 
-    std::array<ModHook, 5> actor_hooks = {
+    std::array<ModHook, 6> actor_hooks = {
         ModHook(L"BP_GenericKey_C", L"BndEvt__BP_GenericKey_Sphere_K2Node_ComponentBoundEvent_0_"
                                    "ComponentBeginOverlapSignature__DelegateSignature",
             [](CallableContext context, void*) {
@@ -57,6 +57,10 @@ namespace {
                 Event::UpdateTimer(context.Context);
                 auto active_room = context.GetParams<int32_t>();
                 Trigger::SetRoom(active_room);
+            }),
+        ModHook(L"BP_PrincessBoss_C", L"BPI_CombatDeath",
+            [](CallableContext context, void*) {
+                Trigger::EnemyDeath(context.Context->GetName());
             }),
     };
 
@@ -150,7 +154,7 @@ namespace
 
 void RegisterModHook(RC::Unreal::UObject* object, ModHook& hook)
 {
-    RC::Unreal::UFunction* func = object->GetFunctionByName(hook._function_name.c_str());
+    RC::Unreal::UFunction* func = object->GetFunctionByNameInChain(RC::Unreal::FName(hook._function_name));
     if (!func)
     {
         Log(L"Could not find function \"" + hook._function_name + L"\" in " + hook._class_name, LogType::Error);

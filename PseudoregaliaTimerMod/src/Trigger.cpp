@@ -496,6 +496,14 @@ void Trigger::TouchTransition(std::wstring transition_name)
     queued_transition_event = zone_transition_events.at(transition_name);
 }
 
+void Trigger::EnemyDeath(std::wstring enemy_name)
+{
+    if (enemy_name == L"BP_PrincessBoss_C_1")
+    {
+        Event::Triggered(Event::Event::FinishGame);
+    }
+}
+
 void Trigger::Reset()
 {
     queued_small_key_event.reset();
