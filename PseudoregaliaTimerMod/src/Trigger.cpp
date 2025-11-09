@@ -67,7 +67,7 @@ namespace
     const EventMap upgrade_events = {
         {L"Zone_Library", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilitySunGreaves},
-            {L"BP_UpgradeBase_C_2", Event::Event::AttireSweater},
+            {L"BP_UpgradeBase_C_2", Event::Event::OutfitSweater},
             {L"BP_UpgradeBase_C_6", Event::Event::AspectClearMindLibrary},
         }},
         {L"ZONE_LowerCastle", {
@@ -75,41 +75,41 @@ namespace
             {L"BP_UpgradeBase_C_3", Event::Event::AspectPilgrimage},
             {L"BP_UpgradeBase_C_4", Event::Event::AspectGoodGracesCastle},
             {L"BP_UpgradeBase_C_5", Event::Event::AspectClearMindCastle},
-            {L"BP_UpgradeBase_C_6", Event::Event::Memento},
-            {L"BP_UpgradeBase_C_7", Event::Event::AttireProfessionalism},
+            {L"BP_UpgradeBase_C_6", Event::Event::AbilityMemento},
+            {L"BP_UpgradeBase_C_7", Event::Event::OutfitProfessionalism},
         }},
         {L"ZONE_Exterior", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilitySolarWind},
             {L"BP_UpgradeBase_C_2", Event::Event::AspectEmpathyBailey},
-            {L"BP_UpgradeBase_C_3", Event::Event::AttireChivalry},
+            {L"BP_UpgradeBase_C_3", Event::Event::OutfitChivalry},
         }},
         {L"Zone_Upper", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilitySunsetter},
             {L"BP_UpgradeBase_C_2", Event::Event::AbilityStrikebreak},
             {L"BP_UpgradeBase_C_3", Event::Event::AspectClearMindKeep},
-            {L"BP_UpgradeBase_C_6", Event::Event::AttireAGuardian},
+            {L"BP_UpgradeBase_C_6", Event::Event::OutfitAGuardian},
         }},
         {L"Zone_Caves", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilityAscendantLight},
-            {L"BP_UpgradeBase_C_2", Event::Event::AttireNostalgia},
+            {L"BP_UpgradeBase_C_2", Event::Event::OutfitNostalgia},
             {L"BP_UpgradeBase_C_4", Event::Event::AspectMartialProwess},
             {L"BP_UpgradeBase_C_6", Event::Event::AspectHeliacalPower},
         }},
         {L"Zone_Theatre", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilitySoulCutter},
             {L"BP_UpgradeBase_C_2", Event::Event::AspectAerialFinesse},
-            {L"BP_UpgradeBase_C_3", Event::Event::AttireClass},
+            {L"BP_UpgradeBase_C_3", Event::Event::OutfitClass},
             {L"BP_UpgradeBase_C_4", Event::Event::AspectEmpathyTheatre},
         }},
         {L"ZONE_Dungeon", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilityDreamBreaker},
             {L"BP_UpgradeBase_C_2", Event::Event::AbilitySlide},
-            {L"BP_UpgradeBase_C_3", Event::Event::AttireDevotion},
+            {L"BP_UpgradeBase_C_3", Event::Event::OutfitDevotion},
             {L"BP_UpgradeBase_C_8", Event::Event::AspectGoodGracesDungeon},
         }},
         {L"Zone_Tower", {
             {L"BP_UpgradeBase_C_1", Event::Event::AbilityClingGem},
-            {L"BP_UpgradeBase_C_2", Event::Event::AttireBleedingHeart},
+            {L"BP_UpgradeBase_C_2", Event::Event::OutfitBleedingHeart},
         }},
     };
 
