@@ -36,11 +36,11 @@ Your best time for each segment is stored until you quit the game, so make sure 
 
 There are many mods that may be helpful when doing speedrun practice (see the pins in #pseudo-all-categorys in the discord for a good list). These are ones I've found especially useful when using this mod:
 
-* [Custom Options Framework](https://www.nexusmods.com/pseudoregalia/mods/66) **[REQUIRED]** - This is necessary to see the options for this mod in the pause menu, which is used to set the start/end events for the segment you are timing.
+* [Custom Options Framework](https://www.nexusmods.com/pseudoregalia/mods/66) **[REQUIRED]** - This is necessary to see the options for this mod in the pause menu, which is where you set the start/end events for the segment you are timing.
 
 * [Pseudo Menu](https://www.nexusmods.com/pseudoregalia/mods/36) - All the timer mod provides is the timer, so it's up to you to get a save in the proper state for testing a segment. This mod gives you a lot more saves to work with, and it also makes it easier to create a save for practicing a segment that requires certain items.
 
-   However, I recommend uninstalling this mod when practicing a segment starting from the Start Game event since this mod makes loading into the game work a bit differently.
+   *Note: this mod makes loading into the game work a bit differently, so I recommend uninstalling this mod when practicing a segment beginning from the Start Game event.*
 
 * [Reset Button](https://www.nexusmods.com/pseudoregalia/mods/31) - If the segment you're practicing requires getting any items, resetting is necessary to get your save back into a state to re-run the segment. It also resets the timer. I recommend binding the quick reset to F4 to make it easy to use with the position saver mod.
 
@@ -50,7 +50,7 @@ I also recommend the [Show Triggers](https://www.nexusmods.com/pseudoregalia/mod
 
 # Limitations
 
-* Timing may not exactly match with the autosplitter, but it should hopefully be close.
+* Timing may not exactly match the autosplitter, but it should hopefully be close.
 * Right now it is not possible to define a sequence of events that must all be completed. The main issue is that if you want to time a segment with a certain end event, but that event would also trigger somewhere in the middle, that segment isn't possible to time since the timer will stop the first time that event is triggered.
-* Since the room events trigger by peeking into the game's existing map system, you may get some weird behavior with Enter Room events. One thing I've noticed is that if you hit a hazard and respawn into a different room (say, room 5), the Enter Room 5 event won't trigger.
-* I have not tested compatibility with full gold patch at all. It might still mostly work, but I'd guess the room events won't trigger at all.
+* Since the room events trigger by peeking into the game's existing map system, you may get some unexpected behavior with Enter Room events. For example, I've noticed that if you hit a hazard and respawn into a different room (say, room 5), the Enter Room 5 event won't trigger.
+* I have not tested compatibility with full gold patch. It might still mostly work, but I'd guess the room events won't trigger at all.
