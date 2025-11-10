@@ -79,8 +79,8 @@ namespace
         {Event::Event::SmallKeyBaileyBuilding, "Collectible: Small Key: Bailey Building Small Key"},
         {Event::Event::SmallKeyCastleCrossroads, "Collectible: Small Key: Castle Crossroads Small Key"},
         {Event::Event::SmallKeyCastleTallRoom, "Collectible: Small Key: Castle Tall Room Small Key"},
-        {Event::Event::SmallKeyDungeonStrongEyes, "Collectible: Small Key: Dungeon Strong Eyes Small Key"},
         {Event::Event::SmallKeyDungeonRafters, "Collectible: Small Key: Dungeon Rafters Small Key"},
+        {Event::Event::SmallKeyDungeonStrongEyes, "Collectible: Small Key: Dungeon Strong Eyes Small Key"},
         {Event::Event::SmallKeyKeepLeverRoom, "Collectible: Small Key: Keep Lever Room Small Key"},
         {Event::Event::SmallKeyUnderbellyBigRoom, "Collectible: Small Key: Underbelly Big Room Small Key"},
 

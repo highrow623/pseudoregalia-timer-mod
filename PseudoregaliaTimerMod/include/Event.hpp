@@ -68,8 +68,8 @@ namespace Event
         SmallKeyBaileyBuilding,
         SmallKeyCastleCrossroads,
         SmallKeyCastleTallRoom,
-        SmallKeyDungeonStrongEyes,
         SmallKeyDungeonRafters,
+        SmallKeyDungeonStrongEyes,
         SmallKeyKeepLeverRoom,
         SmallKeyUnderbellyBigRoom,
 
