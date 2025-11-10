@@ -300,6 +300,26 @@ namespace
         {Event::Event::RoomUnderbelly36, "Enter Room: Underbelly: Enter Underbelly 36"},
     };
 
+    // event_to_string contains the full event names, including categories. we create this map to pre-parse the actual
+    // event names for logging.
+    const std::map<Event::Event, std::string> event_to_string_short = ([]() -> std::map<Event::Event, std::string> {
+        std::map<Event::Event, std::string> m;
+        for (const auto& [event, event_string] : event_to_string)
+        {
+            auto pos = event_string.rfind(": ");
+            if (pos == std::string::npos)
+            {
+                m[event] = event_string;
+            }
+            else
+            {
+                // add 2 to account for delimiter size
+                m[event] = event_string.substr(pos + 2);
+            }
+        }
+        return m;
+    })();
+
     // the event map is ordered which means each event has an index, so we create this vector to be able to map an index
     // back to an event
     const std::vector<Event::Event> event_list = ([]() -> std::vector<Event::Event> {
@@ -381,7 +401,7 @@ void Event::Triggered(Event event)
         auto current_millis = (std::chrono::steady_clock::now() - *start_time).count() / 1000000LL;
         timer_str = " (" + MillisToString(current_millis) + ")";
     }
-    Log("e: " + event_to_string.at(event) + timer_str);
+    Log("e: " + event_to_string_short.at(event) + timer_str);
 }
 
 void Event::InitializeTimer(RC::Unreal::UObject* manager_obj)
@@ -541,7 +561,7 @@ void SetEvents(int32_t start_index, int32_t end_index)
     if (start_index >= 0 && size_t(start_index) < event_list.size())
     {
         start_event = event_list[start_index];
-        Log("start event set to " + event_to_string.at(*start_event));
+        Log("start event set to " + event_to_string_short.at(*start_event));
     }
     else
     {
@@ -550,7 +570,7 @@ void SetEvents(int32_t start_index, int32_t end_index)
     if (end_index >= 0 && size_t(end_index) < event_list.size())
     {
         end_event = event_list[end_index];
-        Log("end event set to " + event_to_string.at(*end_event));
+        Log("end event set to " + event_to_string_short.at(*end_event));
     }
     else
     {
