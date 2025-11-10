@@ -1,8 +1,6 @@
 # TODO
 
-* remake the options menu to group the events into categories
 * write readme
-  * install instructions
   * recommended mods
   * how to use
 
