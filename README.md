@@ -42,9 +42,9 @@ There are many mods that may be helpful when doing speedrun practice (see the pi
 
    *Note: this mod makes loading into the game work a bit differently, so I recommend uninstalling this mod when practicing a segment beginning from the Start Game event.*
 
-* [Reset Button](https://www.nexusmods.com/pseudoregalia/mods/31) - If the segment you're practicing requires getting any items, resetting is necessary to get your save back into a state to re-run the segment. It also resets the timer. I recommend binding the quick reset to F4 to make it easy to use with the position saver mod.
+* [Pseudoregalia Position Saver](https://www.nexusmods.com/pseudoregalia/mods/63) - This mod is useful for setting consistent start locations for testing segments and quickly getting back to them. I recommend saving positions as "Save Reload" since that will also reset the timer.
 
-* [Pseudoregalia Position Saver](https://www.nexusmods.com/pseudoregalia/mods/63) - This mod is useful for setting consistent start locations for testing segments and quickly getting back to them after resetting. The way this mod reloads the area doesn't interact with the game's reset function, meaning it leaves your save in the same state. So I recommend saving positions as "Teleport Only" so you can quickly reset by pressing F4 then F5. Just make sure you save your game in the same zone as where your segment starts.
+   Some segments may require some setup to work correctly, e.g. if in normal gameplay you would have hit a safe zone and you want to test respawning at that safe zone in your segment. For this I recommend putting a "Save Reload" position near the safe zone to set it after resetting, then another "Teleport Only" position where you will actually start your segment.
 
 I also recommend the [Show Triggers](https://www.nexusmods.com/pseudoregalia/mods/81) and [Free Cam](https://www.nexusmods.com/pseudoregalia/mods/70) mods.
 
